@@ -1,0 +1,170 @@
+from flask import Flask, render_template, redirect, url_for, request, flash, session 
+from flask_sqlalchemy import SQLAlchemy 
+from werkzeug.security import generate_password_hash, check_password_hash 
+from helpers import login_required, cargar_pokemon import pandas as pd 
+
+app = Flask(__name__) 
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' 
+app.config['SECRET_KEY'] = 'your_secret_key' 
+db = SQLAlchemy(app) 
+
+# Cargar los datos del CSV 
+df = pd.read_csv('pokemon.csv') 
+
+# Modelo de Usuarios 
+class User(db.Model): 
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False) 
+    password = db.Column(db.String(150), nullable=False) 
+
+# Modelo de Equipo 
+class Team(db.Model): 
+    id = db.Column(db.Integer, primary_key=True) 
+    pokemon1 = db.Column(db.String(50)) 
+    pokemon2 = db.Column(db.String(50)) 
+    pokemon3 = db.Column(db.String(50)) 
+    pokemon4 = db.Column(db.String(50)) 
+    pokemon5 = db.Column(db.String(50)) 
+    pokemon6 = db.Column(db.String(50)) 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) 
+    user = db.relationship('User', backref=db.backref('teams', lazy=True)) 
+
+# Modelo de Entrenador 
+class Trainer(db.Model): 
+    id = db.Column(db.Integer, primary_key=True) 
+    id_usuario = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) 
+    id_equipo = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False) 
+    user = db.relationship('User', backref=db.backref('trainers', lazy=True)) 
+    team = db.relationship('Team', backref=db.backref('trainers', lazy=True)) 
+
+# Home route
+@app.route('/') 
+def home(): 
+    username = None 
+    if 'user_id' in session: 
+        user = db.session.get(User, session['user_id']) 
+        username = user.username if user else None 
+        return render_template('home.html', username=username) 
+
+# Registration route 
+@app.route('/register', methods=['GET', 'POST']) 
+def register(): 
+    if request.method == 'POST': 
+        username = request.form['username'] 
+        password = request.form['password'] 
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256') 
+        # Verificar si el usuario ya existe 
+        existing_user = User.query.filter_by(username=username).first() 
+        if existing_user: 
+            flash('Username already exists. Please choose a different one.') 
+            return redirect(url_for('register')) 
+        new_user = User(username=username, password=hashed_password) 
+        db.session.add(new_user) 
+        db.session.commit() 
+        flash('Registration successful! Please log in.') 
+        return redirect(url_for('login')) 
+        return render_template('register.html') 
+# Login route
+@app.route('/login', methods=['GET', 'POST']) 
+def login(): 
+if request.method == 'POST': 
+    username = request.form['username'] 
+    password = request.form['password'] 
+    user = User.query.filter_by(username=username).first() 
+    if user and check_password_hash(user.password, password): 
+        session['user_id'] = user.id flash('Login successful!') 
+        return redirect(url_for('pokedex')) 
+        else: 
+            flash('Login failed. Check your username and/or password.') 
+            return render_template('login.html') 
+# Logout route 
+@app.route('/logout') 
+def logout(): 
+    session.pop('user_id', None) 
+    flash('You have been logged out.') 
+    return redirect(url_for('home')) 
+
+# Pokédex route 
+@app.route('/pokedex') 
+def pokedex(): 
+    pokedex = cargar_pokemon('pokemon.csv') 
+    return render_template('pokedex.html', pokedex=pokedex) 
+
+# Mi equipo Actual 
+@app.route('/mi-equipo') 
+@login_required 
+def mi_equipo(): 
+    equipo_usuario = Team.query.filter_by(user_id=session['user_id']).first() 
+    if not equipo_usuario: 
+        equipo_usuario = Team(user_id=session['user_id']) 
+        db.session.add(equipo_usuario) db.session.commit() 
+        equipo_pokemon = [ 
+            equipo_usuario.pokemon1,                
+            equipo_usuario.pokemon2, 
+            equipo_usuario.pokemon3, 
+            equipo_usuario.pokemon4, 
+            equipo_usuario.pokemon5, 
+            equipo_usuario.pokemon6 
+        ] 
+        equipo_pokemon = [pokemon for pokemon in equipo_pokemon if pokemon] 
+        todos_pokemon = cargar_pokemon('pokemon.csv') 
+        equipo_completo = [] 
+        for pokemon_id in equipo_pokemon: 
+            pokemon_data = [element for element in todos_pokemon if element['id'] == int(pokemon_id)] 
+            if pokemon_data: 
+                equipo_completo.append({ 'id': pokemon_data[0]["id"], 
+                                        'nombre': pokemon_data[0]["nombre"], 
+                                        'tipo1': pokemon_data[0]["tipo1"], 
+                                        'tipo2': pokemon_data[0]["tipo2"], 
+                                        'imagen': f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{pokemon_data[0]['id']}.png" }) 
+                                        return render_template("mi_equipo.html", pokemon=todos_pokemon, equipo=equipo_completo) 
+        
+        @app.route('/agregar-pokemon', methods=['POST']) 
+        @login_required 
+        def agregar_pokemon(): 
+            pokemon_id = request.form.get("pokemon_id") 
+            equipo_usuario = Team.query.filter_by(user_id=session['user_id']).first() 
+            if equipo_usuario: 
+                equipo_pokemon = [ 
+                    equipo_usuario.pokemon1, 
+                    equipo_usuario.pokemon2, 
+                    equipo_usuario.pokemon3, 
+                    equipo_usuario.pokemon4, 
+                    equipo_usuario.pokemon5, 
+                    equipo_usuario.pokemon6 
+                ] 
+                if None in equipo_pokemon: 
+                    index = equipo_pokemon.index(None) 
+                    equipo_pokemon[index] = pokemon_id equipo_usuario.pokemon1, equipo_usuario.pokemon2, equipo_usuario.pokemon3, equipo_usuario.pokemon4, equipo_usuario.pokemon5, equipo_usuario.pokemon6 = equipo_pokemon 
+                    db.session.commit() 
+                    flash("Pokémon successfully added") 
+                    else: 
+                        flash("Tu equipo ya está completo") 
+                        return redirect("/mi-equipo") 
+                        
+@app.route('/eliminar-pokemon', methods=['POST']) 
+@login_required def eliminar_pokemon(): 
+    pokemon_id = int(request.form.get("pokemon_id")) 
+    equipo_usuario = Team.query.filter_by(user_id=session['user_id']).first() 
+    if equipo_usuario: 
+        equipo_pokemon = [ 
+            equipo_usuario.pokemon1, 
+            equipo_usuario.pokemon2, 
+            equipo_usuario.pokemon3, 
+            equipo_usuario.pokemon4, 
+            equipo_usuario.pokemon5, 
+            equipo_usuario.pokemon6
+            ]
+        if str(pokemon_id) in equipo_pokemon: 
+        index = equipo_pokemon.index(str(pokemon_id)) 
+        equipo_pokemon[index] = None 
+        equipo_usuario.pokemon1, equipo_usuario.pokemon2, equipo_usuario.pokemon3, equipo_usuario.pokemon4, equipo_usuario.pokemon5, equipo_usuario.pokemon6 = equipo_pokemon 
+        db.session.commit() 
+        flash("Pokémon removed from the team.") 
+        return redirect("/mi-equipo") 
+
+if __name__ == '__main__':
+    with app.app_context(): 
+        db.create_all() 
+    app.run(debug=True)

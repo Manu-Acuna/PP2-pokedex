@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="../static/css/pokedex.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+</head>
+
+<body>
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/pokedex">Pokédex</a>
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/">Home</a>
+            <a class="nav-item nav-link" href="{{ url_for('mi_equipo') }}">My Team</a>
+        </div>
+    </nav> -->
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="container py-5 my-0">
+        <h1 class="mb-4 margin-top-content">Lista Pokémon</h1>
+        <div class="row">
+            {% for pokemon in pokedex %}
+            <div class="col-md-4 mb-2">
+                <div class="pokemon-card">
+                    <div class="pokemon-image-container mb-2">
+                        <img src="https://cdn.prod.website-files.com/62f97959430d26d63966a7a7/6393bc901541020aab381034_battleBackground2%201.png" alt="background" class="pokemon-background"/>
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" class="pokemon-image">
+                    </div>
+                    <h3>#{{ pokemon.id }} {{ pokemon.nombre }}</h3>
+                    <h4>
+                        {% if pokemon.tipo1 != None %}
+                        <span class="badge badge-primary type-badge type-{{ pokemon.tipo1 }}">
+                            {{ pokemon.tipo1 }}
+                        </span>
+                        {% endif %}
+                        {% if pokemon.tipo2 != None %}
+                        <span class="badge badge-primary type-badge type-{{ pokemon.tipo2 }}">
+                            {{ pokemon.tipo2 }}
+                        </span>
+                        {% endif %}
+                    </h4>
+                    <form action="/agregar-pokemon" method="post">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="apodo">Apodo (opcional):</span>
+                            <input class="form-control" type="text" name="apodo" id="apodo">
+                        </div>
+                        <input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
+                        <button type="submit" class="btn btn-primary btn-agregar">Agregar al equipo</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+		<!-- Botón que redirige a la parte superior de la página -->
+		<button id="back-to-top" class="btn btn-primary">Subir</button>
+    </div>
+    {% endblock %}
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // Mostrar el botón cuando se hace scroll
+        window.addEventListener('scroll', function() {
+            var button = document.getElementById('back-to-top');
+            if (window.scrollY > 10) {
+                button.style.display = 'block';
+            } else {
+                button.style.display = 'none';
+            }
+        });
+
+        // Redirigir a la parte superior de la página cuando se hace clic en el botón
+        document.getElementById('back-to-top').addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
+
+
+

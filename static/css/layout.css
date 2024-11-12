@@ -1,0 +1,17 @@
+.pokemon-card {
+    transition: transform 0.2s;
+    margin: 10px 5px;
+}
+.pokemon-card:hover {
+    transform: scale(1.05);
+}
+.navbar-brand img {
+    width: 30px;
+    margin-right: 10px;
+}
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}

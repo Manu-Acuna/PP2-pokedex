@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>My Pokémon Team</title>
+	<link rel="stylesheet" href="../static/css/mi_equipo.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">	
+</head>
+<body>
+	{% extends "layout.html" %}
+	{% block content %}
+	<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="/pokedex">Pokédex</a>
+		<div class="navbar-nav">
+			<a class="nav-item nav-link" href="/">Home</a>
+			<a class="nav-item nav-link" href="{{ url_for('mi_equipo') }}">My Team</a>
+		</div>
+	</nav> -->
+	<div class="container py-5 my-0 ">
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<div class="alert alert-info alert-dismissible fade show" role="alert">
+					{% for message in messages %}
+						{{ message }}<br>
+					{% endfor %}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endif %}
+		{% endwith %}
+
+		<div class="container m-0 p-0">
+			<h1 class="mb-4 margin-top-content">My Team</h1>
+			<div class="row">
+				{% for pokemon in equipo %}
+				<div class="col-md-4 mb-2">
+					<div class="pokemon-card">
+						<div class="pokemon-image-container mb-2">
+							<img src="https://cdn.prod.website-files.com/62f97959430d26d63966a7a7/6393bc901541020aab381034_battleBackground2%201.png" alt="background" class="pokemon-background"/>
+							<img src="{{ pokemon.imagen }}" alt="{{ pokemon.nombre }}" class="pokemon-image">
+						</div>
+						<h3 class="m-0">{{ pokemon.apodo if pokemon.apodo else 'Sin apodo' }}</h3>
+						<h5>#{{ pokemon.id }} {{ pokemon.nombre }}</h5>
+						<h4>
+							{% if pokemon.tipo1 != None %}
+							<span class="badge badge-primary type-badge type-{{ pokemon.tipo1 }}">
+								{{ pokemon.tipo1 }}
+							</span>
+							{% endif %}
+							{% if pokemon.tipo2 != None %}
+							<span class="badge badge-primary type-badge type-{{ pokemon.tipo2 }}">
+								{{ pokemon.tipo2 }}
+							</span>
+							{% endif %}
+						</h4>
+						<form class="ms-auto" action="/eliminar-pokemon" method="post">
+							<input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
+							<button type="submit" class="btn btn-primary btn-eliminar">Delete</button>
+						</form>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		
+			{% if equipo|length < 6 %}
+			<div class="mt-4 formulario-agregar">
+				<h3>Add Pokémon to the Team</h3>
+				<form action="/agregar-pokemon" method="post">
+					<div class="input-group mb-3">
+						<label class="input-group-text" for="pokemon_id">Select a Pokémon:</label>
+						<select class="form-select" name="pokemon_id" id="pokemon_id" required>
+							{% for p in pokemon %}
+								<option value="{{ p.id }}">{{ p.nombre }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-text" for="ap odo">Nickname (optional):</span>
+						<input class="form-control" type="text" name="apodo" id="apodo">
+					</div>
+					<button type="submit" class="btn btn-primary btn-agregar">Add to team</button>
+				</form>
+			</div>
+			{% else %}
+				<div class="alert alert-warning" role="alert">
+					Your team is complete. Delete a Pokémon to add a new one.
+				</div>
+			{% endif %}
+		</div>
+	</div>	
+		{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 1500); // 1500 milisegundos = 1,5 segundos
+</script>
+
+</body>
+</html>

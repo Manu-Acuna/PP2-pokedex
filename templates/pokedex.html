@@ -12,16 +12,20 @@
 </head>
 
 <body>
-    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/pokedex">Pokédex</a>
-        <div class="navbar-nav">
-            <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-item nav-link" href="{{ url_for('mi_equipo') }}">My Team</a>
-        </div>
-    </nav> -->
     {% extends "layout.html" %}
     {% block content %}
-    <div class="container py-5 my-0">
+    <div class="container py-5 my-0 mt-4">
+        <!--Mensajes flash-->
+        {% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<div class="alert alert-info alert-dismissible fade show" role="alert">
+					{% for message in messages %}
+						{{ message }}<br>
+					{% endfor %}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endif %}
+		{% endwith %}
         <h1 class="mb-4 margin-top-content">Lista Pokémon</h1>
         <div class="row">
             {% for pokemon in pokedex %}
@@ -65,19 +69,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
         // Mostrar el botón cuando se hace scroll
-        window.addEventListener('scroll', function() {
-            var button = document.getElementById('back-to-top');
-            if (window.scrollY > 10) {
-                button.style.display = 'block';
-            } else {
-                button.style.display = 'none';
-            }
-        });
+        // window.addEventListener('scroll', function() {
+        //     var button = document.getElementById('back-to-top');
+        //     if (window.scrollY > 10) {
+        //         button.style.display = 'block';
+        //     } else {
+        //         button.style.display = 'none';
+        //     }
+        // });
 
         // Redirigir a la parte superior de la página cuando se hace clic en el botón
-        document.getElementById('back-to-top').addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        // document.getElementById('back-to-top').addEventListener('click', function() {
+        //     window.scrollTo({ top: 0, behavior: 'smooth' });
+        // });
     </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required, cargar_pokemon, cargar_equipo, guardar_equipo
 import pandas as pd
+import re
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -38,13 +39,13 @@ def register():
 		# Verificar si el usuario ya existe
 		existing_user = User.query.filter_by(username=username).first()
 		if existing_user:
-			flash('Username already exists. Please choose a different one.')
+			flash('El usuario ya existe. Por favor, elija otro nombre de usuario.')
 			return redirect(url_for('register'))
 		
 		new_user = User(username=username, password=hashed_password)
 		db.session.add(new_user)
 		db.session.commit()
-		flash('Registration successful! Please log in.')
+		flash('Registro completo. Por favor inicie sesion.')
 		return redirect(url_for('login'))
 	return render_template('register.html')
 
@@ -58,17 +59,17 @@ def login():
 		
 		if user and check_password_hash(user.password, password):
 			session['user_id'] = user.id
-			flash('Login successful!')
+			flash('Inicio de sesión exitoso.')
 			return redirect(url_for('pokedex'))
 		else:
-			flash('Login failed. Check your username and/or password.')
+			flash('Error al iniciar sesión. Verifique su nombre de usuario y/o contraseña.')
 	return render_template('login.html')
 
 # Logout route
 @app.route('/logout')
 def logout():
 	session.pop('user_id', None)
-	flash('You have been logged out.')
+	flash('Cerraste sesion con exito.')
 	return redirect(url_for('home'))
 
 # Pokédex route
@@ -103,18 +104,16 @@ def mi_equipo():
 def agregar_pokemon():
 	pokemon_id = request.form.get("pokemon_id")
 	apodo = request.form.get("apodo")
-	
 	equipo_usuario = cargar_equipo('equipos.csv', session['user_id'])
-	
 	if len(equipo_usuario) >= 6:
 		flash("Tu equipo ya está completo")
 	else:
 		nuevo_pokemon = {"id": pokemon_id, "apodo": apodo}
 		equipo_usuario.append(nuevo_pokemon)
 		guardar_equipo('equipos.csv', session['user_id'], equipo_usuario)
-		flash("Pokémon successfully added")
+		flash("Pokemon añadido con exito.")
 	
-	return redirect("/mi-equipo")
+	return redirect("/pokedex")
 
 @app.route('/eliminar-pokemon', methods=['POST'])
 @login_required
@@ -124,7 +123,7 @@ def eliminar_pokemon():
 	equipo_usuario = [p for p in equipo_usuario if p['id'] != pokemon_id]
 	guardar_equipo('equipos.csv', session['user_id'], equipo_usuario)
 	
-	flash("Pokémon removed from the team.")
+	flash("Pokémon removido del equipo con exito.")
 	
 	return redirect("/mi-equipo")
 

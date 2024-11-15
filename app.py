@@ -19,6 +19,23 @@ class User(db.Model):
 	username = db.Column(db.String(150), unique=True, nullable=False)
 	password = db.Column(db.String(150), nullable=False)
 
+def contraseña_valida(password):
+    if len(password) < 8:
+        return False
+    if not re.search("[a-z]", password):
+        return False
+    if not re.search("[A-Z]", password):
+        return False
+    if not re.search("[0-9]", password):
+        return False
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+    return True
+
+def validar_mail(username):
+    # Expresion regular para validar el formato del mail
+    regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(regex, username) is not None
 # Home route
 @app.route('/')
 def home():
@@ -34,13 +51,26 @@ def register():
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
+        
+        # Validar mail
+		if not validar_mail(username):
+			flash('El correo electrónico no es válido.')
+			return render_template('register.html', username=username, password=password)
+			
+  		# Validar la contraseña
+		if not contraseña_valida(password):
+			flash('La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 mayúscula, 1 numero y 1 carácter especial.')
+			return render_template('register.html', username=username, password=password)
+   			# return redirect(url_for('register'))
+
 		hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 		
-		# Verificar si el usuario ya existe
+  		# Verificar si el usuario ya existe
 		existing_user = User.query.filter_by(username=username).first()
 		if existing_user:
 			flash('El usuario ya existe. Por favor, elija otro nombre de usuario.')
-			return redirect(url_for('register'))
+			return render_template('register.html', username=username)
+   			# return redirect(url_for('register'))
 		
 		new_user = User(username=username, password=hashed_password)
 		db.session.add(new_user)

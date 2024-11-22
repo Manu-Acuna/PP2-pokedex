@@ -1,54 +1,126 @@
 .type-normal{
-	background-color: #adab8d !important;
+	background-color: #aba77285 !important;
+}
+.icon-normal-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#adab8d 50%, #000 120%);
 }
 .type-poison{
-	background-color: #ae01cb !important;
+	background-color: #9909b185 !important;
+}
+.icon-poison-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#b210cd 50%, #000 120%);
 }
 .type-psychic{
-	background-color: #fe509b !important;
+	background-color: #ff238285 !important;
+}
+.icon-psychic-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#fe509b 50%, #000 120%);
 }
 .type-grass{
-	background-color: #3bcb01 !important;
+	background-color: #3bcb0185 !important;
+}
+.icon-grass-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#3bcb01 50%, #000 120%);
 }
 .type-ground{
-	background-color: #e5bc61 !important;
+	background-color: #896b2885 !important;
+}
+.icon-ground-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#e5bc61 50%, #000 120%);
 }
 .type-ice{
-	background-color: #88dbec !important;
+	background-color: #31e16785 !important;
+}
+.icon-ice-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#4cd1c0 50%, #000 120%);
 }
 .type-fire{
-	background-color: #ff7111 !important;
+	background-color: #ff2f0085 !important;
+}
+.icon-fire-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#ff2f00 50%, #000 120%);
 }
 .type-rock{
-	background-color: #c49100 !important;
+	background-color: #674c0085 !important;
+}
+.icon-rock-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#c49100 50%, #000 120%);
 }
 .type-dragon{
-	background-color: #6622ee !important;
+	background-color: #5113cd85 !important;
+}
+.icon-dragon-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#9560ff 50%, #000 120%);
 }
 .type-water{
-	background-color: #717fff !important;
+	background-color: #19afe485 !important;
+}
+.icon-water-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#19afe4 50%, #000 120%);
 }
 .type-bug{
-	background-color: #9cc31f !important;
+	background-color: #75b32485 !important;
+}
+.icon-bug-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#9cc31f 50%, #000 120%);
 }
 .type-dark{
-	background-color: #494949 !important;
+	background-color: #10335285 !important;
 }
-.type-fighting{
-	background-color: #c80000 !important;
+.icon-dark-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#3e79ad 50%, #000 120%);
+}
+.type-fighting, .type-fight{
+	background-color: #a3000085 !important;
+}
+.icon-fighting-bg, .icon-fight-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#c51b1b 50%, #000 120%);
 }
 .type-ghost{
-	background-color: #663993 !important;
+	background-color: #500f9385 !important;
+}
+.icon-ghost-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#8237cf 50%, #000 120%);
 }
 .type-steel{
-	background-color: #a6a8c6 !important;
+	background-color: #a6a8c685 !important;
+}
+.icon-steel-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#a6a8c6 50%, #000 120%);
 }
 .type-flying{
-	background-color: #a890fe !important;
+	background-color: #a890fe85 !important;
+}
+.icon-flying-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#a890fe 50%, #000 120%);
 }
 .type-electric{
-	background-color: #ffd525 !important;
+	background-color: #ff8d0085 !important;
+}
+.icon-electric-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#ffc600 50%, #000 120%);
 }
 .type-fairy{
-	background-color: #f9a5d1 !important;
+	background-color: #e7509f85 !important;
+}
+.icon-fairy-bg{
+  background-image: radial-gradient(farthest-corner at 25% 25%, #fff 0%, transparent 40%),
+                    radial-gradient(#f9a5d1 50%, #000 120%);
 }

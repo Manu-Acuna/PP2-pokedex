@@ -14,6 +14,7 @@ def login_required(f):
 
 def cargar_pokemon(archivo_csv):
     pokemon = []
+    tipos = ["normal","fire","water","grass","ground","rock","ice","steel","dark","dragon","fairy","psychic","poison","ghost","bug","fight","flying","electric"]
     with open(archivo_csv, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -36,7 +37,8 @@ def cargar_pokemon(archivo_csv):
                     'habilidades': row['abilities'].strip("[]").replace("'", "").split(', ') if row['abilities'] else [],
                     'clasificacion': row['classfication'],
                     'tasa_captura': int(row['capture_rate']),
-                    'experiencia_base': int(row['base_total'])
+                    'experiencia_base': int(row['base_total']),
+                    'debilidades': [tipo for tipo in tipos if float(row[f'against_{tipo}']) == 2]
                 })
             except KeyError as e:
                 print(f"Error: Falta la columna {e} en el archivo CSV.")
@@ -50,7 +52,7 @@ def cargar_equipo(archivo_csv, user_id):
         # Crea el archivo con un encabezado si no existe
         with open(archivo_csv, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['user_id', 'pokemon_id', 'apodo'])
+            writer.writerow(['user_id', 'pokemon_id'])
         return []  # Retorna una lista vacía ya que el archivo estaba vacío
 
     equipo = []
@@ -61,7 +63,7 @@ def cargar_equipo(archivo_csv, user_id):
                 if int(row['user_id']) == user_id:
                     equipo.append({
                         'id': int(row['pokemon_id']),
-                        'apodo': row['apodo']
+                        
                     })
     except IOError as e:
         print(f"Error al abrir el archivo: {e}")
@@ -84,7 +86,6 @@ def guardar_equipo(archivo_csv, user_id, equipo):
         todos_equipos.append({
             'user_id': str(user_id),
             'pokemon_id': pokemon['id'],
-            'apodo': pokemon['apodo']
         })
     
     # Finalmente, escribimos todo de vuelta al archivo

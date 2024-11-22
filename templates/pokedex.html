@@ -3,88 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../static/favicon.png">
     <title>Pokédex</title>
     <link rel="stylesheet" href="../static/css/pokedex.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
 </head>
 
 <body>
     {% extends "layout.html" %}
     {% block content %}
     <div class="container py-5 my-0 mt-4">
-        <!--Mensajes flash-->
+        <!-- Mensajes flash -->
         {% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<div class="alert alert-info alert-dismissible fade show" role="alert">
-					{% for message in messages %}
-						{{ message }}<br>
-					{% endfor %}
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
-			{% endif %}
-		{% endwith %}
+            {% if messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        {% endwith %}
         <h1 class="mb-4 margin-top-content">Lista Pokémon</h1>
+        
+        <form method="POST" action="{{ url_for('pokedex') }}">
+            <select name="tipo" class="form-select mb-3">
+                <option value="">Todos</option>
+                <option value="steel">Acero</option>
+                <option value="water">Agua</option>
+                <option value="bug">Bicho</option>
+                <option value="dragon">Dragón</option>
+                <option value="electric">Eléctrico</option>
+                <option value="ghost">Fantasma</option>
+                <option value="fire">Fuego</option>
+                <option value="fairy">Hada</option>
+                <option value="ice">Hielo</option>
+                <option value="fighting">Lucha</option>
+                <option value="normal">Normal</option>
+                <option value="dark">Oscuro</option>
+                <option value="grass">Planta</option>
+                <option value="psychic">Psiquico</option>
+                <option value="rock">Roca</option>
+                <option value="poison">Veneno</option>
+                <option value="ground">Tierra</option>
+                <option value="flying">Volador</option>
+                <!-- Añade más opciones según los tipos disponibles -->
+            </select>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+        <br>
+        <!-- Aquí se renderizan los Pokémon filtrados -->
         <div class="row">
             {% for pokemon in pokedex %}
             <div class="col-md-4 mb-2">
                 <div class="pokemon-card">
-                    <div class="pokemon-image-container mb-2">
-                        <img src="https://cdn.prod.website-files.com/62f97959430d26d63966a7a7/6393bc901541020aab381034_battleBackground2%201.png" alt="background" class="pokemon-background"/>
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" class="pokemon-image">
+                    <div class="pokemon-header">
+                        <img class="basic-card" src="/static/img/basic-card.webp" loading="lazy">
+                        <h3 class="pokemon-name">
+                            {{ pokemon.nombre }}
+                        </h3>
+                        <h4 class="pokemon-hp">
+                          HP<span>{{ pokemon.hp }}</span>
+                        </h4>
+                        <img class="pokemon-icon-type icon-{{ pokemon.tipo1 }}-bg" src="/static/img/icons-types/{{ pokemon.tipo1 }}.webp" loading="lazy">
                     </div>
-                    <h3>#{{ pokemon.id }} {{ pokemon.nombre }}</h3>
-                    <h4>
-                        {% if pokemon.tipo1 != None %}
-                        <span class="badge badge-primary type-badge type-{{ pokemon.tipo1 }}">
-                            {{ pokemon.tipo1 }}
-                        </span>
-                        {% endif %}
-                        {% if pokemon.tipo2 != None %}
-                        <span class="badge badge-primary type-badge type-{{ pokemon.tipo2 }}">
-                            {{ pokemon.tipo2 }}
-                        </span>
-                        {% endif %}
-                    </h4>
-                    <form action="/agregar-pokemon" method="post">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text" for="apodo">Apodo (opcional):</span>
-                            <input class="form-control" type="text" name="apodo" id="apodo">
+                    <div class="pokemon-data-container type-{{ pokemon.tipo1 }}">
+                        <div class="pokemon-image-container mb-4">
+                            <img class="pokemon-image pokemon-shadow" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" loading="lazy">
+                            <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" loading="lazy">
+                            <div class="pokemon-bar-image">
+                                <img src="/static/img/bar-image.webp" loading="lazy">
+                                <h4>
+                                  NO. {{ pokemon.id }} {{ pokemon.clasificacion }} &nbsp; HT: {{ pokemon.altura }}mts &nbsp; WT: {{ pokemon.peso }}kg.
+                                </h4>
+                            </div>
                         </div>
-                        <input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
-                        <button type="submit" class="btn btn-primary btn-agregar">Agregar al equipo</button>
-                    </form>
+                        <div class="pokemon-body">
+                            {% if pokemon.tipo2 %}
+                            <h5 class="tipo-secundario">
+                                Tipo secundario: <span>{{ pokemon.tipo2 }}</span>
+                                <img class="pokemon-icon-type icon-{{ pokemon.tipo2 }}-bg" src="/static/img/icons-types/{{ pokemon.tipo2 }}.webp" loading="lazy">
+                            </h5>
+                            {% endif %}
+                            <div class="pokemon-stats">
+                                <h5>
+                                  Ataque: {{ pokemon.ataque }}
+                                </h5>
+                                <h5>
+                                  Defensa: {{ pokemon.defensa }}
+                                </h5>
+                            </div>
+                            <div class="pokemon-weakness">
+                                <h5>
+                                  Debilidades:
+                                  {% for tipo in pokemon.debilidades %}
+                                    <img class="pokemon-icon-type icon-{{ tipo }}-bg" src="/static/img/icons-types/{{ tipo }}.webp" loading="lazy">
+                                  {% endfor %}
+                                  x<span>2</span>
+                                </h5>
+                            </div>
+                        </div>
+                        <form class="pokemon-form" action="/agregar-pokemon" method="post">
+                            <input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
+                            <button type="submit" class="btn btn-primary btn-agregar">Agregar al equipo</button>
+                        </form>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-		<!-- Botón que redirige a la parte superior de la página -->
-		<button id="back-to-top" class="btn btn-primary">Subir</button>
+        <!-- Botón que redirige a la parte superior de la página -->
+        <button id="back-to-top" class="btn btn-primary">Subir</button>
     </div>
     {% endblock %}
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        // Mostrar el botón cuando se hace scroll
-        // window.addEventListener('scroll', function() {
-        //     var button = document.getElementById('back-to-top');
-        //     if (window.scrollY > 10) {
-        //         button.style.display = 'block';
-        //     } else {
-        //         button.style.display = 'none';
-        //     }
-        // });
-
-        // Redirigir a la parte superior de la página cuando se hace clic en el botón
-        // document.getElementById('back-to-top').addEventListener('click', function() {
-        //     window.scrollTo({ top: 0, behavior: 'smooth' });
-        // });
-    </script>
 </body>
 </html>
-
-
-

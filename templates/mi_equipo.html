@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../static/favicon.png">
 	<title>Mi equipo Pokemon</title>
 	<link rel="stylesheet" href="../static/css/mi_equipo.css">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -27,62 +28,98 @@
 		<div class="container m-0 p-0">
 			<h1 class="mb-4 margin-top-content">Mi equipo Pokémon</h1>
 			<div class="row">
-				{% for pokemon in equipo %}
-				<div class="col-md-4 mb-2">
-					<div class="pokemon-card">
-						<div class="pokemon-image-container mb-2">
-							<img src="https://cdn.prod.website-files.com/62f97959430d26d63966a7a7/6393bc901541020aab381034_battleBackground2%201.png" alt="background" class="pokemon-background"/>
-							<img src="{{ pokemon.imagen }}" alt="{{ pokemon.nombre }}" class="pokemon-image">
-						</div>
-						<h3 class="m-0">{{ pokemon.apodo if pokemon.apodo else 'Sin apodo' }}</h3>
-						<h5>#{{ pokemon.id }} {{ pokemon.nombre }}</h5>
-						<h4>
-							{% if pokemon.tipo1 != None %}
-							<span class="badge badge-primary type-badge type-{{ pokemon.tipo1 }}">
-								{{ pokemon.tipo1 }}
-							</span>
-							{% endif %}
-							{% if pokemon.tipo2 != None %}
-							<span class="badge badge-primary type-badge type-{{ pokemon.tipo2 }}">
-								{{ pokemon.tipo2 }}
-							</span>
-							{% endif %}
-						</h4>
-						<form class="ms-auto" action="/eliminar-pokemon" method="post">
-							<input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
-							<button type="submit" class="btn btn-danger">Borrar</button>
-							<!-- <button type="submit" class="btn btn-primary btn-eliminar">Borrar</button> -->
-						</form>
-					</div>
-				</div>
-				{% endfor %}
+        {% for pokemon in equipo %}
+        <div class="col-md-4 mb-2">
+            <div class="pokemon-card">
+              <div class="pokemon-header">
+                <img class="basic-card" src="/static/img/basic-card.webp" loading="lazy">
+                <h3 class="pokemon-name">
+                    {{ pokemon.nombre }}
+                </h3>
+                <h4 class="pokemon-hp">
+                  HP<span>{{ pokemon.hp }}</span>
+                </h4>
+                <img class="pokemon-icon-type icon-{{ pokemon.tipo1 }}-bg" src="/static/img/icons-types/{{ pokemon.tipo1 }}.webp" loading="lazy">
+              </div>
+              <div class="pokemon-data-container type-{{ pokemon.tipo1 }}">
+                <div class="pokemon-image-container mb-4">
+                  <img class="pokemon-image pokemon-shadow" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" loading="lazy">
+                  <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ pokemon.id }}.png" alt="{{ pokemon.nombre }}" loading="lazy">
+                  <div class="pokemon-bar-image">
+                    <img src="/static/img/bar-image.webp" loading="lazy">
+                    <h4>
+                      NO. {{ pokemon.id }} {{ pokemon.clasificacion }} &nbsp; HT: {{ pokemon.altura }}mts &nbsp; WT: {{ pokemon.peso }}kg.
+                    </h4>
+                  </div>
+                </div>
+                <div class="pokemon-body">
+                  {% if pokemon.tipo2 != None %}
+                  <h5 class="tipo-secundario">
+                    Tipo secundario: <span>{{ pokemon.tipo2 }}</span>
+                    <img class="pokemon-icon-type icon-{{ pokemon.tipo2 }}-bg" src="/static/img/icons-types/{{ pokemon.tipo2 }}.webp" loading="lazy">
+                  </h5>
+                  {% endif %}
+            
+                  <div class="pokemon-stats">
+                    <h5>
+                      Ataque: {{ pokemon.ataque }}
+                    </h5>
+                    <h5>
+                      Defensa: {{ pokemon.defensa }}
+                    </h5>
+                  </div>
+                  <div class="pokemon-weakness">
+                    <h5>
+                      Debilidades:
+                      {% for tipo in pokemon.debilidades %}
+                        <img class="pokemon-icon-type icon-{{ tipo }}-bg" src="/static/img/icons-types/{{ tipo }}.webp" loading="lazy">
+                      {% endfor %}
+                      x<span>2</span>
+                    </h5>
+                  </div>
+                </div>
+                <form class="pokemon-form" action="/eliminar-pokemon" method="post">
+                    <input type="hidden" name="pokemon_id" value="{{ pokemon.id }}">
+                    <button type="submit" class="btn btn-primary btn-eliminar">Eliminar</button>
+                </form>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
 			</div>
 		
 			{% if equipo|length < 6 %}
-			<div class="mt-4 formulario-agregar">
+			<!-- <div class="mt-4 formulario-agregar">
 				<h3>Añade Pokémon al equipo</h3>
 				<form action="/agregar-pokemon" method="post">
 					<div class="input-group mb-3">
 						<label class="input-group-text" for="pokemon_id">Selecciona un Pokémon:</label>
 						<select class="form-select" name="pokemon_id" id="pokemon_id" required>
-							{% for p in pokemon %}
-								<option value="{{ p.id }}">{{ p.nombre }}</option>
-							{% endfor %}
+							{% if equipo %}
+                {% for p in pokemon %}
+								  <option value="{{ p.id }}">{{ p.nombre }}</option>
+							  {% endfor %}
+              {% else %}
+                <div class="alert alert-warning" role="alert">
+                  No hay Pokémon disponibles.
+                </div>
+              {% endif %}  
 						</select>
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text" for="apodo">Apodo (opcional):</span>
-						<input class="form-control" type="text" name="apodo" id="apodo">
 					</div>
 					<button type="submit" class="btn btn-primary btn-agregar">Agregar al equipo</button>
 				</form>
-			</div>
+			</div> -->
 			{% else %}
 				<div class="alert alert-warning" role="alert">
 					Tu equipo está completo. Elimina un Pokémon para añadir uno nuevo.
 				</div>
 			{% endif %}
 		</div>
+    <form action="/eliminar-cuenta" method="post">
+      <button type="submit" class="btn btn-primary btn-eliminar">
+        Eliminar mi cuenta
+      </button>
+    </form>
 	</div>	
 	{% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
